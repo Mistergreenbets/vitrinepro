@@ -324,8 +324,20 @@ header.scrolled img {
   scrollbar-width: none;
   gap: 10px;
   max-width: 900px;
-  margin: 28px auto 20px;
-  padding: 0 16px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  /* fica fixo (sticky) logo abaixo do header ao rolar a página;
+     o "top" exato é ajustado via JS (ajustarPosicaoFiltro), porque a
+     altura do header muda quando ele encolhe no scroll */
+  position: sticky;
+  top: 64px;
+  z-index: 850;
+  background: var(--fundo-suave);
+  transition: box-shadow 0.25s ease;
+}
+
+.filtro-container.colado {
+  box-shadow: 0 6px 20px rgba(91,45,142,0.14);
 }
 
 .filtro-container::-webkit-scrollbar {
@@ -1224,7 +1236,7 @@ footer a:hover { text-decoration: underline; }
   <span class="anuncio-rotulo">Publicidade</span>
   <ins class="adsbygoogle"
        style="display:inline-block;width:300px;height:100px"
-       data-ad-client="ca-pub-6997058042069390"></ins>
+       data-ad-slot="2590334423"></ins>
 </div>
 
 <!-- FILTROS -->
@@ -1286,7 +1298,7 @@ footer a:hover { text-decoration: underline; }
   <span class="anuncio-rotulo">Publicidade</span>
   <ins class="adsbygoogle"
        style="display:inline-block;width:300px;height:100px"
-       data-ad-slot="0000000003"></ins>
+       data-ad-slot="8510010989"></ins>
 </div>
 
 <!-- FOOTER -->
@@ -1460,7 +1472,7 @@ function criarCardAnuncioGrid(){
     <span class="anuncio-rotulo">Publicidade</span>
     <ins class="adsbygoogle"
          style="display:inline-block;width:100%;max-width:260px;height:100px"
-         data-ad-slot="0000000002"></ins>
+         data-ad-slot="4769388165"></ins>
   `;
   return div;
 }
@@ -1922,6 +1934,16 @@ const observer = new IntersectionObserver(entries=>{
 observer.observe(document.getElementById("verMaisBtn"));
 
 /* ===== HEADER STICKY SCROLL ===== */
+function ajustarPosicaoFiltro(){
+  const header = document.querySelector("header");
+  const filtro = document.getElementById("filtroContainer");
+  if(!header || !filtro) return;
+  const alturaHeader = header.offsetHeight;
+  filtro.style.top = alturaHeader + "px";
+  const colado = filtro.getBoundingClientRect().top <= alturaHeader + 1;
+  filtro.classList.toggle("colado", colado);
+}
+
 window.addEventListener("scroll", ()=>{
   const header = document.querySelector("header");
   if(window.scrollY > 10){
@@ -1929,7 +1951,11 @@ window.addEventListener("scroll", ()=>{
   } else {
     header.classList.remove("scrolled");
   }
+  ajustarPosicaoFiltro();
 }, { passive: true });
+
+window.addEventListener("resize", ajustarPosicaoFiltro);
+window.addEventListener("load", ajustarPosicaoFiltro);
 
 /* ===== INIT ===== */
 document.addEventListener("DOMContentLoaded", async ()=>{
@@ -1937,6 +1963,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   if(!lojaConfig) return; // loja não encontrada, mensagem já exibida
   carregarConfigLoja(lojaConfig);
   configurarAnuncios(lojaConfig);
+  ajustarPosicaoFiltro();
   carregarBanners();
   carregarProdutos();
   iniciarDepoimentos();
