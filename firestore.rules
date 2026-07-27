@@ -1,0 +1,123 @@
+rules_version = '2';
+
+// =============================================================================
+// REGRAS DO FIRESTORE — Rabisco & Arte (vendas.html / admin.html / superadmin.html / index.html)
+//
+// Como publicar:
+//   Firebase Console → Firestore Database → Regras → colar este arquivo → Publicar
+//   (ou, via CLI: salve como firestore.rules e rode `firebase deploy --only firestore:rules`)
+//
+// Coleções usadas pelo sistema (confirmadas direto no código dos 4 arquivos):
+//   lojas/{lojaId}       → doc ID = uid do lojista no Firebase Auth
+//   produtos/{id}        → tem campo lojaId apontando pro dono
+//   banners/{id}         → tem campo lojaId apontando pro dono
+//   depoimentos/{id}     → tem campo lojaId apontando pro dono
+//   pedidos/{id}         → tem campo lojaId; criado por clientes SEM login (index.html)
+//   sistema/config       → doc único com o WhatsApp de suporte (só o super admin edita)
+// =============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------------
+    // Funções auxiliares
+    // ---------------------------------------------------------------------
+    function logado() {
+      return request.auth != null;
+    }
+
+    function donoDaLoja(lojaId) {
+      return logado() && request.auth.uid == lojaId;
+    }
+
+    // Mesmo e-mail travado no cliente (superadmin.html, linha do SUPER_ADMIN_EMAIL).
+    // Se um dia esse e-mail mudar lá, precisa mudar aqui também.
+    function superAdmin() {
+      return logado() && request.auth.token.email == 'dayvidpf5000@gmail.com';
+    }
+
+    // Campos que só o super admin pode alterar (aprovação de plano, status de
+    // pagamento etc.) — o lojista NUNCA deve conseguir escrever neles direto,
+    // senão dá pra "hackear" o próprio plano editando o documento na mão.
+    function camposDeAdminIntactos() {
+      let protegidos = ['plano','limiteProdutos','limiteBanners','depoimentosDisponivel',
+                         'limiteDepoimentos','provaSocial','status','proximaMensalidade',
+                         'trialFim','criadoEm','slug','emailDono'];
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny(protegidos) == false;
+    }
+
+    // ---------------------------------------------------------------------
+    // LOJAS
+    // Leitura pública: a vitrine (index.html) busca a loja por slug sem login.
+    // Criação: só no cadastro, e só o próprio uid pode criar o doc com seu ID.
+    // Atualização: o lojista só mexe nos próprios campos "de conteúdo"
+    // (config da loja, contador de produtos, pedido de troca de plano);
+    // tudo que é controle de plano/pagamento só o super admin muda.
+    // ---------------------------------------------------------------------
+    match /lojas/{lojaId} {
+      allow read: if true;
+      allow create: if donoDaLoja(lojaId);
+      allow update: if superAdmin() || (donoDaLoja(lojaId) && camposDeAdminIntactos());
+      allow delete: if superAdmin();
+    }
+
+    // ---------------------------------------------------------------------
+    // PRODUTOS / BANNERS / DEPOIMENTOS
+    // Mesmo padrão nos três: catálogo é público (index.html lê sem login),
+    // só o dono da loja (lojaId == uid) cria/edita/apaga os próprios itens,
+    // e não pode "transferir" um item pra outra loja mudando o lojaId.
+    // ---------------------------------------------------------------------
+    match /produtos/{produtoId} {
+      allow read: if true;
+      allow create: if logado() && request.resource.data.lojaId == request.auth.uid;
+      allow update: if logado() && resource.data.lojaId == request.auth.uid
+                      && request.resource.data.lojaId == resource.data.lojaId;
+      allow delete: if logado() && resource.data.lojaId == request.auth.uid;
+    }
+
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow create: if logado() && request.resource.data.lojaId == request.auth.uid;
+      allow update: if logado() && resource.data.lojaId == request.auth.uid
+                      && request.resource.data.lojaId == resource.data.lojaId;
+      allow delete: if logado() && resource.data.lojaId == request.auth.uid;
+    }
+
+    match /depoimentos/{depoimentoId} {
+      allow read: if true;
+      allow create: if logado() && request.resource.data.lojaId == request.auth.uid;
+      allow update: if logado() && resource.data.lojaId == request.auth.uid
+                      && request.resource.data.lojaId == resource.data.lojaId;
+      allow delete: if logado() && resource.data.lojaId == request.auth.uid;
+    }
+
+    // ---------------------------------------------------------------------
+    // PEDIDOS
+    // Criado por qualquer cliente anônimo na vitrine pública (sem login) —
+    // por isso "create: if true". Leitura/edição (mudar status) só o dono
+    // da loja dona do pedido. Ninguém apaga pedido pelo app.
+    // ---------------------------------------------------------------------
+    match /pedidos/{pedidoId} {
+      allow create: if true;
+      allow read, update: if logado() && resource.data.lojaId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // SISTEMA/CONFIG
+    // Qualquer lojista logado precisa LER (pra saber o WhatsApp de suporte);
+    // só o super admin escreve.
+    // ---------------------------------------------------------------------
+    match /sistema/{docId} {
+      allow read: if logado();
+      allow write: if superAdmin();
+    }
+
+    // ---------------------------------------------------------------------
+    // Tudo o que não foi listado acima fica bloqueado por padrão.
+    // ---------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

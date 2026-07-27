@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Super Admin — Gestão de Lojas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- FIREBASE SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<style>
+:root {
+  --roxo-escuro:   #2D1B5E;
+  --roxo-medio:    #5B2D8E;
+  --roxo-vivo:     #7B2FBE;
+  --roxo-lavanda:  #C39BD3;
+  --laranja-meio:   #F5820A;
+  --grad-hero:  linear-gradient(135deg, #7B2FBE 0%, #5B2D8E 50%, #2D1B5E 100%);
+  --grad-btn:   linear-gradient(135deg, #8B35C5 0%, #5B2D8E 100%);
+  --branco:      #FFFFFF;
+  --fundo-suave: #FAF8FF;
+  --cinza-texto: #555566;
+  --texto-escuro:#1A1225;
+  --sombra-card: 0 4px 24px rgba(91, 45, 142, 0.10);
+  --radius-sm:  10px;
+  --radius-md:  16px;
+  --radius-lg:  22px;
+  --radius-pill:999px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--fundo-suave);color:var(--texto-escuro);min-height:100vh;}
+button,input{font-family:inherit;outline:none;}
+
+#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad-hero);padding:20px;}
+.login-box{background:#fff;border-radius:var(--radius-lg);padding:36px 30px;width:100%;max-width:380px;box-shadow:0 20px 50px rgba(0,0,0,0.25);text-align:center;}
+.login-box h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.2rem;color:var(--roxo-escuro);margin-bottom:6px;}
+.login-box p{color:var(--cinza-texto);font-size:0.85rem;margin-bottom:18px;}
+.login-box input{width:100%;padding:13px 16px;margin-bottom:12px;border-radius:var(--radius-md);border:1.5px solid #E5E0F0;font-size:0.95rem;font-weight:600;background:var(--fundo-suave);}
+.login-box button{width:100%;padding:14px;border:none;border-radius:var(--radius-md);background:var(--grad-btn);color:#fff;font-weight:800;font-size:0.95rem;cursor:pointer;margin-top:6px;}
+#loginErro{color:#c0392b;font-size:0.82rem;font-weight:700;margin-top:10px;min-height:18px;}
+
+#telaPainel{display:none;min-height:100vh;}
+.topbar{background:#fff;color:var(--roxo-escuro);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 4px 20px rgba(91,45,142,0.14);border-bottom:3px solid;border-image:var(--grad-hero) 1;}
+.topbar h1{font-family:'Poppins',sans-serif;font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:12px;color:var(--roxo-escuro);}
+.topbar .logo-fixo{height:60px;width:auto;display:block;}
+.login-box .logo-fixo{height:80px;width:auto;margin:0 auto 14px;display:block;}
+.topbar button{background:#fff;border:1.5px solid var(--roxo-lavanda);color:var(--roxo-medio);padding:8px 16px;border-radius:var(--radius-pill);font-weight:700;font-size:0.82rem;cursor:pointer;}
+.topbar button:hover{background:var(--cinza-leve);}
+
+.conteudo{max-width:1000px;margin:0 auto;padding:20px;}
+.resumo{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.resumo .box{flex:1;min-width:140px;background:#fff;border-radius:var(--radius-md);padding:16px;box-shadow:var(--sombra-card);text-align:center;}
+.resumo .box strong{display:block;font-family:'Poppins',sans-serif;font-size:1.5rem;color:var(--roxo-vivo);}
+.resumo .box span{font-size:0.75rem;color:var(--cinza-texto);font-weight:700;text-transform:uppercase;}
+
+.loja-card{background:#fff;border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--sombra-card);margin-bottom:14px;}
+.card{background:#fff;border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--sombra-card);}
+.loja-card.pendente{border:2px solid var(--laranja-meio);}
+.loja-card.suspensa{opacity:0.75;border:2px solid #e74c3c;}
+.loja-card.teste-vencido{border:2px solid #1565C0;}
+.loja-topo{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:8px;}
+.loja-topo h3{font-family:'Poppins',sans-serif;font-size:1rem;color:var(--roxo-escuro);}
+.loja-topo span{display:block;font-size:0.78rem;color:var(--cinza-texto);margin-top:2px;}
+.tag{display:inline-block;padding:3px 12px;border-radius:var(--radius-pill);font-size:0.7rem;font-weight:800;margin-left:6px;}
+.tag-ativo{background:#E8F8EE;color:#27ae60;}
+.tag-suspenso{background:#FFE5E5;color:#c0392b;}
+.tag-pendente{background:#FFF3E0;color:#E65C00;}
+.tag-teste{background:#E3F2FD;color:#1565C0;}
+.tag-teste-vencido{background:#FFE5E5;color:#c0392b;}
+.info-datas{font-size:0.78rem;color:var(--cinza-texto);margin-top:6px;font-weight:700;}
+.info-datas .venc{color:#c0392b;}
+
+.pedido-box{background:#FFF8EE;border:1.5px dashed var(--laranja-meio);border-radius:var(--radius-sm);padding:10px 14px;margin:10px 0;font-size:0.85rem;font-weight:700;color:#8a4b00;}
+
+.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.btn-aprovar{background:#27ae60;color:#fff;border:none;padding:9px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:0.8rem;cursor:pointer;}
+.btn-recusar{background:#fff;color:#c0392b;border:1.5px solid #ffd5d5;padding:9px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:0.8rem;cursor:pointer;}
+.btn-suspender{background:#fff;color:#c0392b;border:1.5px solid #ffd5d5;padding:9px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:0.8rem;cursor:pointer;}
+.btn-reativar{background:#fff;color:#27ae60;border:1.5px solid #cdeedd;padding:9px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:0.8rem;cursor:pointer;}
+.btn-pagamento{background:#1565C0;color:#fff;border:none;padding:9px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:0.8rem;cursor:pointer;}
+.btn-link{background:#fff;color:var(--roxo-medio);border:1.5px solid #E5E0F0;padding:9px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:0.8rem;cursor:pointer;text-decoration:none;display:inline-block;}
+
+#acessoNegado{display:none;text-align:center;padding:60px 20px;}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="telaLogin">
+  <div class="login-box">
+    <img class="logo-fixo" src="logo-vitrinepro.png" alt="Vitrine Pro">
+    <h1>🛡️ Super Admin</h1>
+    <p>Gestão de todas as lojas do SaaS</p>
+    <input id="loginEmail" type="email" placeholder="Email" autocomplete="username">
+    <input id="loginSenha" type="password" placeholder="Senha" autocomplete="current-password">
+    <button onclick="fazerLogin()">Entrar</button>
+    <p id="loginErro"></p>
+  </div>
+</div>
+
+<div id="acessoNegado">
+  <h1 style="font-family:'Poppins',sans-serif;color:#c0392b;">Acesso negado</h1>
+  <p style="margin-top:10px;color:var(--cinza-texto);">Essa conta não tem permissão de Super Admin.</p>
+</div>
+
+<!-- ===== PAINEL ===== -->
+<div id="telaPainel">
+  <div class="topbar">
+    <h1><img class="logo-fixo" src="logo-vitrinepro.png" alt="Vitrine Pro"> Super Admin — Lojas do SaaS</h1>
+    <button onclick="auth.signOut()">Sair</button>
+  </div>
+
+  <div class="conteudo">
+    <div class="card" style="margin-bottom:20px;">
+      <h2 style="font-family:'Poppins',sans-serif;font-size:1rem;color:var(--roxo-escuro);margin-bottom:12px;">📲 WhatsApp de suporte</h2>
+      <p style="font-size:0.82rem;color:var(--cinza-texto);margin-bottom:12px;">
+        Esse número aparece pros lojistas quando eles pedem troca de plano, pra falar direto com você sobre o pagamento.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input id="whatsappSuporte" placeholder="Ex: 5585999999999 (com DDI+DDD, só números)" style="flex:1;min-width:220px;padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid #E5E0F0;font-size:0.9rem;font-weight:600;">
+        <button class="btn-aprovar" onclick="salvarWhatsappSuporte()">💾 Salvar</button>
+      </div>
+      <p id="whatsappStatus" style="font-size:0.8rem;font-weight:700;margin-top:8px;min-height:16px;"></p>
+    </div>
+
+    <div class="resumo">
+      <div class="box"><strong id="totalLojas">0</strong><span>Lojas ativas</span></div>
+      <div class="box"><strong id="totalTeste">0</strong><span>Em teste grátis</span></div>
+      <div class="box"><strong id="totalPendentes">0</strong><span>Pedidos pendentes</span></div>
+      <div class="box"><strong id="totalSuspensas">0</strong><span>Suspensas</span></div>
+    </div>
+
+    <div id="listaLojas">Carregando lojas...</div>
+  </div>
+</div>
+
+<script>
+/* ⚠️ Só este email tem acesso de Super Admin (também reforçado nas regras do Firestore) */
+const SUPER_ADMIN_EMAIL = "dayvidpf5000@gmail.com";
+
+/* ===== SEGURANÇA: escape de HTML — dados de "lojas" são preenchidos pelo lojista
+   no cadastro e exibidos aqui sem passar por validação, então precisam ser
+   escapados antes de entrar no innerHTML deste painel. ===== */
+function escapeHtml(valor){
+  return String(valor ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[ch]));
+}
+
+/* =====================================================================
+   NÍVEIS DE CRESCIMENTO — deve ficar IDÊNTICO ao objeto NIVEIS_PLANO do
+   admin.html. É o super admin quem grava esses valores na loja ao
+   aprovar uma troca de plano, então os dois precisam concordar sobre
+   o que cada nível libera.
+   ===================================================================== */
+const NIVEIS_PLANO = {
+  basico: {
+    nivel: 1,
+    nome: "Starter",
+    preco: 24.90,
+    limiteProdutos: 20,
+    limiteBanners: 1,
+    depoimentosDisponivel: false,
+    limiteDepoimentos: 0,
+    provaSocial: false,
+    anuncios: true,
+    recursos: [
+      "Catálogo com até 20 produtos",
+      "Loja própria com pedidos direto no WhatsApp",
+      "1 banner de destaque no topo",
+      "Com anúncios do Google na loja"
+    ]
+  },
+  intermediario: {
+    nivel: 2,
+    nome: "Growth",
+    preco: 39.90,
+    limiteProdutos: 50,
+    limiteBanners: 5,
+    depoimentosDisponivel: true,
+    limiteDepoimentos: 10,
+    provaSocial: true,
+    anuncios: false,
+    recursos: [
+      "Tudo do nível Starter",
+      "Catálogo com até 50 produtos",
+      "Até 5 banners rotativos",
+      "Depoimentos de clientes na loja",
+      "Nota média e nº de pedidos em destaque",
+      "Sem anúncios — loja 100% limpa"
+    ]
+  },
+  completo: {
+    nivel: 3,
+    nome: "Elite",
+    preco: 59.90,
+    limiteProdutos: 0,
+    limiteBanners: 0,
+    depoimentosDisponivel: true,
+    limiteDepoimentos: 0,
+    provaSocial: true,
+    anuncios: false,
+    recursos: [
+      "Tudo do nível Growth",
+      "Produtos ilimitados",
+      "Banners ilimitados",
+      "Depoimentos ilimitados",
+      "Prioridade no suporte"
+    ]
+  }
+};
+
+const NOMES_PLANO = {};
+Object.keys(NIVEIS_PLANO).forEach(k=>{
+  const n = NIVEIS_PLANO[k];
+  NOMES_PLANO[k] = `Nível ${n.nivel} · ${n.nome} (R$ ${n.preco.toFixed(2).replace(".",",")} · ${n.limiteProdutos ? n.limiteProdutos+" produtos" : "ilimitado"})`;
+});
+
+/* Preenche o que faltar nas lojas antigas (criadas antes dos níveis de
+   crescimento) com os padrões do plano atual, sem precisar migrar o banco. */
+function getEntitlements(c){
+  const base = NIVEIS_PLANO[c.plano] || NIVEIS_PLANO.basico;
+  return {
+    limiteProdutos:         typeof c.limiteProdutos === "number" ? c.limiteProdutos : base.limiteProdutos,
+    limiteBanners:          typeof c.limiteBanners === "number" ? c.limiteBanners : base.limiteBanners,
+    depoimentosDisponivel:  typeof c.depoimentosDisponivel === "boolean" ? c.depoimentosDisponivel : base.depoimentosDisponivel,
+    limiteDepoimentos:      typeof c.limiteDepoimentos === "number" ? c.limiteDepoimentos : base.limiteDepoimentos,
+    provaSocial:            typeof c.provaSocial === "boolean" ? c.provaSocial : base.provaSocial,
+    anuncios:               c.semAnuncios === true ? false : (typeof c.anuncios === "boolean" ? c.anuncios : base.anuncios)
+  };
+}
+
+/* Resumo curto dos recursos liberados pro nível atual da loja — usado
+   nos cards da lista pra dar contexto rápido de suporte. */
+function resumoRecursos(ent){
+  const partes = [
+    `🛍️ ${ent.limiteProdutos ? "até "+ent.limiteProdutos+" produtos" : "produtos ilimitados"}`,
+    `🖼️ ${ent.limiteBanners ? "até "+ent.limiteBanners+" banner"+(ent.limiteBanners===1?"":"s") : "banners ilimitados"}`,
+    ent.depoimentosDisponivel
+      ? `💜 depoimentos ${ent.limiteDepoimentos ? "(até "+ent.limiteDepoimentos+")" : "ilimitados"}`
+      : `💜 sem depoimentos`,
+    ent.provaSocial ? `⭐ prova social ativa` : `⭐ sem prova social`,
+    ent.anuncios ? `📢 com anúncios AdSense` : `✅ sem anúncios`
+  ];
+  return partes.join(" &nbsp;·&nbsp; ");
+}
+
+/* ===== HELPERS DE DATA / TESTE GRÁTIS / MENSALIDADE ===== */
+function paraDate(ts){
+  if(!ts) return null;
+  return ts.toDate ? ts.toDate() : new Date(ts);
+}
+function formatarData(ts){
+  const d = paraDate(ts);
+  return d ? d.toLocaleDateString("pt-BR") : "—";
+}
+function formatarDataHora(ts){
+  const d = paraDate(ts);
+  return d ? `${d.toLocaleDateString("pt-BR")} às ${d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}` : "—";
+}
+function diasRestantes(ts){
+  const d = paraDate(ts);
+  if(!d) return null;
+  return Math.ceil((d.getTime() - Date.now()) / (1000*60*60*24));
+}
+
+/* Sessão isolada por aba: permite ter o Super Admin aberto numa aba
+   e o Admin de algum cliente em outra, sem um derrubar o login do outro. */
+auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+
+auth.onAuthStateChanged(user=>{
+  if(user && user.email === SUPER_ADMIN_EMAIL){
+    document.getElementById("telaLogin").style.display = "none";
+    document.getElementById("acessoNegado").style.display = "none";
+    document.getElementById("telaPainel").style.display = "block";
+    carregarLojas();
+    carregarWhatsappSuporte();
+  } else if(user){
+    auth.signOut();
+    document.getElementById("telaLogin").style.display = "none";
+    document.getElementById("telaPainel").style.display = "none";
+    document.getElementById("acessoNegado").style.display = "block";
+  } else {
+    document.getElementById("telaLogin").style.display = "flex";
+    document.getElementById("telaPainel").style.display = "none";
+    document.getElementById("acessoNegado").style.display = "none";
+  }
+});
+
+function fazerLogin(){
+  const email = document.getElementById("loginEmail").value.trim();
+  const senha = document.getElementById("loginSenha").value;
+  const erroEl = document.getElementById("loginErro");
+  erroEl.innerText = "";
+  auth.signInWithEmailAndPassword(email, senha)
+    .catch(err=>{ erroEl.innerText = "Email ou senha inválidos."; console.error(err); });
+}
+
+/* ===== WHATSAPP DE SUPORTE ===== */
+async function carregarWhatsappSuporte(){
+  try{
+    const doc = await db.collection("sistema").doc("config").get();
+    document.getElementById("whatsappSuporte").value = doc.exists ? (doc.data().whatsappSuporte||"") : "";
+  }catch(err){ console.error(err); }
+}
+
+async function salvarWhatsappSuporte(){
+  const statusEl = document.getElementById("whatsappStatus");
+  const numero = document.getElementById("whatsappSuporte").value.replace(/\D/g,"");
+  if(!numero){ statusEl.style.color="#c0392b"; statusEl.innerText="Digite um número válido."; return; }
+  statusEl.style.color = "#555566";
+  statusEl.innerText = "Salvando...";
+  try{
+    await db.collection("sistema").doc("config").set({ whatsappSuporte: numero }, { merge: true });
+    statusEl.style.color = "#27ae60";
+    statusEl.innerText = "✓ Número salvo! Já vale para todos os lojistas.";
+  }catch(err){
+    console.error(err);
+    statusEl.style.color = "#c0392b";
+    statusEl.innerText = "Erro ao salvar. Confira se a regra do Firestore para /sistema já foi publicada.";
+  }
+}
+
+async function carregarLojas(){
+  const lista = document.getElementById("listaLojas");
+  lista.innerHTML = "Carregando lojas...";
+  const snap = await db.collection("lojas").orderBy("criadoEm","desc").get();
+
+  if(snap.empty){ lista.innerHTML = "<p>Nenhuma loja cadastrada ainda.</p>"; return; }
+
+  let ativas = 0, pendentes = 0, suspensas = 0, emTeste = 0;
+  lista.innerHTML = "";
+
+  snap.forEach(doc=>{
+    const l = doc.data();
+    const id = doc.id;
+    const suspensa = l.status === "suspenso";
+    const emTesteAgora = l.status === "teste";
+    const pendente = !!l.planoSolicitado;
+    const trialDias = emTesteAgora ? diasRestantes(l.trialFim) : null;
+    const trialVencido = emTesteAgora && trialDias !== null && trialDias < 0;
+
+    if(suspensa) suspensas++; else ativas++;
+    if(pendente) pendentes++;
+    if(emTesteAgora) emTeste++;
+
+    const linkLoja = `${location.origin}${location.pathname.replace("superadmin.html","index.html")}?loja=${l.slug}`;
+
+    let tagStatus;
+    if(suspensa){
+      tagStatus = '<span class="tag tag-suspenso">Suspensa</span>';
+    } else if(emTesteAgora){
+      tagStatus = trialVencido
+        ? '<span class="tag tag-teste-vencido">Teste vencido</span>'
+        : '<span class="tag tag-teste">Em teste</span>';
+    } else {
+      tagStatus = '<span class="tag tag-ativo">Ativa</span>';
+    }
+
+    let infoDatas = `<div class="info-datas">📅 Cadastrado em: ${formatarDataHora(l.criadoEm)}`;
+    if(emTesteAgora){
+      infoDatas += trialVencido
+        ? ` &nbsp;·&nbsp; <span class="venc">🎁 Teste grátis venceu em ${formatarDataHora(l.trialFim)} (há ${Math.abs(trialDias)} dia${Math.abs(trialDias)===1?"":"s"})</span>`
+        : ` &nbsp;·&nbsp; 🎁 Teste grátis termina em ${formatarDataHora(l.trialFim)} (${trialDias} dia${trialDias===1?"":"s"} restante${trialDias===1?"":"s"})`;
+    } else if(l.proximaMensalidade){
+      infoDatas += ` &nbsp;·&nbsp; 💳 Próxima mensalidade: ${formatarData(l.proximaMensalidade)}`;
+    }
+    infoDatas += `</div>`;
+
+    const ent = getEntitlements(l);
+
+    const card = document.createElement("div");
+    card.className = "loja-card" + (pendente?" pendente":"") + (suspensa?" suspensa":"") + (trialVencido?" teste-vencido":"");
+    card.innerHTML = `
+      <div class="loja-topo">
+        <div>
+          <h3>${escapeHtml(l.nomeLoja) || "(sem nome)"}
+            ${tagStatus}
+            ${pendente ? '<span class="tag tag-pendente">Pedido pendente</span>' : ''}
+          </h3>
+          <span>📧 ${escapeHtml(l.emailDono) || "—"} &nbsp;·&nbsp; 🔗 ${escapeHtml(l.slug)}</span>
+          <span>Plano atual: ${escapeHtml(NOMES_PLANO[l.plano] || l.plano || "—")}</span>
+          <span>${resumoRecursos(ent)}</span>
+        </div>
+      </div>
+
+      ${infoDatas}
+
+      ${pendente ? `
+        <div class="pedido-box">
+          ⏳ Quer trocar para: ${escapeHtml(NOMES_PLANO[l.planoSolicitado] || l.planoSolicitado)}
+          ${NIVEIS_PLANO[l.planoSolicitado] ? `<br><span style="font-weight:600;">Isso vai liberar: ${NIVEIS_PLANO[l.planoSolicitado].recursos.join(" · ")}</span>` : ""}
+        </div>
+      ` : ""}
+
+      <div class="acoes">
+        <a class="btn-link" href="${linkLoja}" target="_blank">🔗 Ver loja</a>
+        ${pendente ? `
+          <button class="btn-aprovar" onclick="aprovarPlano('${id}','${l.planoSolicitado}')">✓ Aprovar troca</button>
+          <button class="btn-recusar" onclick="recusarPlano('${id}')">✕ Recusar pedido</button>
+        ` : ""}
+        ${(emTesteAgora || suspensa) ? `<button class="btn-pagamento" onclick="confirmarPagamento('${id}')">💳 Confirmar pagamento (+30 dias)</button>` : ""}
+        ${!emTesteAgora ? (suspensa
+          ? `<button class="btn-reativar" onclick="alterarStatus('${id}','ativo')">▶️ Reativar acesso</button>`
+          : `<button class="btn-suspender" onclick="alterarStatus('${id}','suspenso')">⏸️ Suspender acesso</button>`
+        ) : ""}
+        ${ent.anuncios
+          ? `<button class="btn-link" onclick="alternarIsencaoAnuncios('${id}', true)">🙈 Isentar de anúncios (cortesia)</button>`
+          : (l.semAnuncios ? `<button class="btn-link" onclick="alternarIsencaoAnuncios('${id}', false)">📢 Voltar a exibir anúncios</button>` : "")
+        }
+      </div>
+    `;
+    lista.appendChild(card);
+  });
+
+  document.getElementById("totalLojas").innerText = ativas;
+  document.getElementById("totalTeste").innerText = emTeste;
+  document.getElementById("totalPendentes").innerText = pendentes;
+  document.getElementById("totalSuspensas").innerText = suspensas;
+}
+
+async function confirmarPagamento(id){
+  if(!confirm("Confirmar que o pagamento da mensalidade dessa loja foi recebido? Isso libera o acesso por mais 30 dias.")) return;
+  const novaData = new Date(Date.now() + 30*24*60*60*1000);
+  try{
+    await db.collection("lojas").doc(id).update({
+      status: "ativo",
+      proximaMensalidade: firebase.firestore.Timestamp.fromDate(novaData)
+    });
+    carregarLojas();
+  }catch(err){
+    console.error(err);
+    alert("Erro ao confirmar pagamento. Tente novamente.");
+  }
+}
+
+/* Aprovar troca de nível grava TODOS os recursos daquele nível na loja
+   (produtos, banners, depoimentos, prova social) — não só o limite de
+   produtos. É o que faz o admin.html liberar/bloquear cada recurso. */
+async function aprovarPlano(id, novoPlano){
+  const n = NIVEIS_PLANO[novoPlano];
+  if(!n){ alert("Nível de plano desconhecido: " + novoPlano); return; }
+  if(!confirm(`Confirmar aprovação do Nível ${n.nivel} · ${n.nome}?\n\nIsso vai liberar:\n• ${n.recursos.join("\n• ")}`)) return;
+  await db.collection("lojas").doc(id).update({
+    plano: novoPlano,
+    limiteProdutos: n.limiteProdutos,
+    limiteBanners: n.limiteBanners,
+    depoimentosDisponivel: n.depoimentosDisponivel,
+    limiteDepoimentos: n.limiteDepoimentos,
+    provaSocial: n.provaSocial,
+    anuncios: n.anuncios,
+    planoSolicitado: null,
+    limiteSolicitado: null
+  });
+  carregarLojas();
+}
+
+/* Isenção manual de anúncios — cortesia do super admin, independente do
+   plano contratado. Vence sempre sobre o campo "anuncios" (ver getEntitlements). */
+async function alternarIsencaoAnuncios(id, isentar){
+  const msg = isentar
+    ? "Isentar essa loja de exibir anúncios do Google, como cortesia?"
+    : "Voltar a exibir anúncios do Google nessa loja (conforme o plano contratado)?";
+  if(!confirm(msg)) return;
+  await db.collection("lojas").doc(id).update({ semAnuncios: isentar });
+  carregarLojas();
+}
+
+async function recusarPlano(id){
+  if(!confirm("Recusar esse pedido de troca de plano?")) return;
+  await db.collection("lojas").doc(id).update({
+    planoSolicitado: null,
+    limiteSolicitado: null
+  });
+  carregarLojas();
+}
+
+async function alterarStatus(id, novoStatus){
+  const msg = novoStatus === "suspenso"
+    ? "Suspender o acesso do lojista ao painel admin? A loja continua no ar normalmente para os clientes."
+    : "Reativar o acesso do lojista ao painel admin?";
+  if(!confirm(msg)) return;
+  await db.collection("lojas").doc(id).update({ status: novoStatus });
+  carregarLojas();
+}
+</script>
+</body>
+</html>

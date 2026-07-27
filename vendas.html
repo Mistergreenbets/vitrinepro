@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vitrine Pro — Sua loja online, pronta pra vender</title>
+<meta name="description" content="Monte o catálogo da sua marca, personalize as cores e o banner, e receba pedidos direto no WhatsApp. Sem código, sem complicação.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* =============================================
+   TOKENS DE DESIGN — MESMA PALETA DO PRODUTO
+============================================= */
+:root {
+  --roxo-escuro:   #2D1B5E;
+  --roxo-medio:    #5B2D8E;
+  --roxo-vivo:     #7B2FBE;
+  --roxo-claro:    #9B59C5;
+  --roxo-lavanda:  #C39BD3;
+
+  --laranja-escuro: #E65C00;
+  --laranja-meio:   #F5820A;
+  --laranja-claro:  #FFAA00;
+  --amarelo-ouro:   #FFD000;
+
+  --grad-roxa:        linear-gradient(135deg, #5B2D8E 0%, #2D1B5E 100%);
+  --grad-hero:        linear-gradient(135deg, #7B2FBE 0%, #5B2D8E 50%, #2D1B5E 100%);
+  --grad-laranja:     linear-gradient(135deg, #FFD000 0%, #F5820A 60%, #E65C00 100%);
+  --grad-vibrante:    linear-gradient(135deg, #9B59C5 0%, #7B2FBE 40%, #E65C00 100%);
+  --grad-btn:         linear-gradient(135deg, #8B35C5 0%, #5B2D8E 100%);
+  --grad-btn-laranja: linear-gradient(135deg, #FFD000 0%, #F5820A 100%);
+
+  --branco:      #FFFFFF;
+  --fundo-suave: #FAF8FF;
+  --fundo-card:  #FFFFFF;
+  --cinza-leve:  #F2EEF8;
+  --cinza-texto: #555566;
+  --texto-escuro:#1A1225;
+
+  --sombra-roxa:    0 8px 32px rgba(91, 45, 142, 0.22);
+  --sombra-card:    0 4px 24px rgba(91, 45, 142, 0.10);
+  --sombra-laranja: 0 8px 24px rgba(245, 130, 10, 0.30);
+
+  --radius-sm:  10px;
+  --radius-md:  18px;
+  --radius-lg:  28px;
+  --radius-xl:  40px;
+  --radius-pill:999px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Nunito', sans-serif;
+  background:var(--fundo-suave);
+  color:var(--texto-escuro);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button, a, input, textarea { outline:none; }
+img{max-width:100%;display:block;}
+
+/* BARRA TOPO */
+.barra-promo{
+  background:var(--grad-vibrante);
+  padding:11px 20px;text-align:center;
+  font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;
+  color:#fff;letter-spacing:0.01em;line-height:1.4;
+}
+
+/* HEADER */
+header{
+  background:#fff;
+  padding:14px 20px 18px;text-align:center;position:sticky;top:0;z-index:100;overflow:hidden;
+  box-shadow:0 4px 20px rgba(91,45,142,0.14);
+  border-bottom:3px solid;border-image:var(--grad-hero) 1;
+}
+header::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(123,47,190,0.06);}
+header::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(245,130,10,0.07);}
+.logo-vp{position:relative;z-index:1;display:inline-flex;align-items:center;gap:11px;}
+.logo-vp img{
+  height:80px;width:auto;display:block;
+  filter:drop-shadow(0 2px 6px rgba(45,27,94,0.15));
+}
+
+nav.nav-links{position:relative;z-index:1;display:flex;justify-content:center;gap:26px;margin-top:16px;flex-wrap:wrap;}
+nav.nav-links a{color:var(--roxo-medio);font-size:0.85rem;font-weight:700;}
+nav.nav-links a:hover{color:var(--laranja-meio);}
+
+/* HERO */
+.hero{max-width:720px;margin:0 auto;padding:44px 20px 8px;text-align:center;}
+.hero .olho{
+  display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 6px;
+  border-radius:var(--radius-pill);background:var(--cinza-leve);
+  font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;
+  text-transform:uppercase;color:var(--roxo-medio);margin-bottom:18px;
+}
+.hero .olho .ponto{width:20px;height:20px;border-radius:50%;background:var(--grad-laranja);display:flex;align-items:center;justify-content:center;font-size:0.65rem;}
+.hero h1{
+  font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.7rem,5vw,2.5rem);
+  line-height:1.18;color:var(--roxo-escuro);margin-bottom:16px;
+}
+.hero h1 em{
+  font-style:normal;
+  background:var(--grad-laranja);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p.sub{font-size:1rem;line-height:1.6;color:var(--cinza-texto);font-weight:600;max-width:520px;margin:0 auto 28px;}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+.btn-grande{
+  padding:15px 30px;border-radius:var(--radius-pill);font-family:'Poppins',sans-serif;font-weight:800;
+  font-size:0.92rem;cursor:pointer;border:none;transition:all .22s ease;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primario-lg{background:var(--grad-btn);color:#fff;box-shadow:var(--sombra-roxa);}
+.btn-primario-lg:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(91,45,142,0.4);}
+.btn-secundario-lg{background:#fff;color:var(--roxo-vivo);border:2px solid var(--roxo-vivo);}
+.btn-secundario-lg:hover{background:var(--grad-btn);color:#fff;border-color:transparent;transform:translateY(-3px);}
+
+/* MOCK DA LOJA — REPLICA DO CATÁLOGO REAL, DENTRO DE UMA MOLDURA DE CELULAR */
+.banner-wrap{max-width:360px;margin:40px auto 0;padding:0 14px;position:relative;}
+.banner-legenda{
+  text-align:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.72rem;
+  letter-spacing:0.05em;text-transform:uppercase;color:var(--roxo-medio);margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.banner-legenda::before,.banner-legenda::after{content:'';width:26px;height:2px;background:var(--roxo-lavanda);border-radius:2px;}
+
+.tel-frame{background:#181025;border-radius:44px;padding:12px;box-shadow:var(--sombra-roxa);}
+.tel-tela{background:#fff;border-radius:32px;overflow:hidden;position:relative;}
+.tel-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:20px;background:#181025;border-radius:0 0 14px 14px;z-index:5;}
+
+.mock-topo-real{background:var(--grad-hero);padding:30px 16px 20px;text-align:center;position:relative;overflow:hidden;}
+.mock-topo-real::before{content:'';position:absolute;top:-30px;right:-30px;width:110px;height:110px;border-radius:50%;background:rgba(255,208,0,0.12);}
+.mock-marca{font-family:'Poppins',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;position:relative;z-index:1;}
+.mock-marca span{color:var(--amarelo-ouro);}
+.mock-marca-sub{font-size:0.62rem;color:rgba(255,255,255,0.78);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-top:3px;position:relative;z-index:1;}
+
+.mock-filtros{display:flex;gap:7px;overflow-x:auto;padding:14px 14px 4px;scrollbar-width:none;}
+.mock-filtros::-webkit-scrollbar{display:none;}
+.mock-filtro{flex:none;padding:7px 14px;border-radius:999px;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.64rem;border:1.5px solid var(--roxo-vivo);color:var(--roxo-vivo);white-space:nowrap;}
+.mock-filtro.ativo{background:var(--grad-btn);color:#fff;border-color:transparent;}
+
+.mock-produtos-real{background:var(--fundo-suave);display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px 18px;}
+.mock-card-real{background:#fff;border-radius:var(--radius-md);box-shadow:var(--sombra-card);overflow:hidden;text-align:left;border:1px solid rgba(155,89,197,0.08);}
+.mock-card-real .foto-real{height:74px;position:relative;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;}
+.mock-card-real .foto-real.roxa{background:var(--grad-vibrante);}
+.mock-card-real .foto-real.laranja{background:var(--grad-laranja);color:var(--roxo-escuro);}
+.mock-card-real .selo{position:absolute;top:6px;left:6px;padding:3px 8px;border-radius:999px;font-size:0.52rem;font-weight:900;letter-spacing:0.02em;text-transform:uppercase;}
+.mock-card-real .selo.novo{background:var(--roxo-escuro);color:#fff;}
+.mock-card-real .selo.promo{background:var(--amarelo-ouro);color:var(--roxo-escuro);}
+.mock-card-real .info-real{padding:8px 9px 10px;}
+.mock-card-real .nome-real{font-family:'Poppins',sans-serif;font-weight:800;font-size:0.68rem;color:var(--roxo-escuro);line-height:1.25;min-height:1.7em;}
+.mock-card-real .preco-real{font-family:'Poppins',sans-serif;font-weight:900;font-size:0.82rem;color:var(--roxo-vivo);margin-top:5px;}
+.mock-card-real .parcela-real{font-size:0.56rem;color:var(--cinza-texto);font-weight:700;}
+.mock-card-real .btn-add-real{margin-top:7px;width:100%;padding:7px;border:none;border-radius:999px;background:var(--grad-btn);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.58rem;letter-spacing:0.03em;text-align:center;}
+
+.mock-whats-real{position:absolute;right:12px;bottom:12px;width:32px;height:32px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.9rem;box-shadow:0 4px 12px rgba(37,211,102,0.4);z-index:2;}
+
+/* SEÇÕES GENÉRICAS (mesmo padrão do secao-titulo) */
+.secao-titulo{text-align:center;padding:56px 20px 8px;font-family:'Poppins',sans-serif;}
+.secao-titulo h2{
+  font-size:clamp(1rem,4vw,1.25rem);font-weight:800;letter-spacing:0.14em;text-transform:uppercase;
+  background:var(--grad-vibrante);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.secao-titulo .linha-deco{display:inline-block;width:60px;height:3px;background:var(--grad-laranja);border-radius:var(--radius-pill);margin-top:8px;}
+.secao-desc{text-align:center;max-width:480px;margin:14px auto 0;color:var(--cinza-texto);font-weight:600;font-size:0.92rem;padding:0 20px;}
+
+/* GRID RECURSOS (reaproveita o cartão .produto) */
+main.grid-recursos{
+  max-width:960px;margin:36px auto 0;padding:0 14px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.produto{
+  position:relative;background:var(--fundo-card);border-radius:var(--radius-md);
+  border:1.5px solid rgba(155,89,197,0.10);box-shadow:var(--sombra-card);
+  overflow:hidden;transition:transform 0.3s ease, box-shadow 0.3s ease;
+  display:flex;flex-direction:column;padding:26px 20px;
+}
+.produto:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 16px 40px rgba(91,45,142,0.18);}
+.produto .icone-recurso{
+  width:48px;height:48px;border-radius:var(--radius-md);background:var(--grad-btn);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.15rem;margin-bottom:16px;
+}
+.produto h3{font-family:'Poppins',sans-serif;font-size:0.98rem;font-weight:800;color:var(--roxo-escuro);margin-bottom:7px;line-height:1.3;}
+.produto p{font-size:0.84rem;line-height:1.55;color:var(--cinza-texto);font-weight:600;}
+
+/* COMO FUNCIONA (reaproveita prova-social) */
+.como-funciona{background:#fff;padding:50px 20px;border-top:1px solid rgba(155,89,197,0.08);}
+.passos-grid{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding-top:14px;}
+.passo{text-align:center;padding:0 12px;}
+.passo .num{
+  width:52px;height:52px;border-radius:50%;background:var(--grad-hero);color:var(--amarelo-ouro);
+  display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:900;font-size:1.2rem;
+  margin:0 auto 16px;box-shadow:var(--sombra-roxa);
+}
+.passo h3{font-family:'Poppins',sans-serif;font-size:0.95rem;font-weight:800;color:var(--roxo-escuro);margin-bottom:8px;}
+.passo p{font-size:0.85rem;color:var(--cinza-texto);font-weight:600;line-height:1.55;}
+
+/* PLANOS (reaproveita cartão .produto com badge e preço) */
+.planos-secao{padding-bottom:20px;}
+.grid-planos{max-width:960px;margin:36px auto 0;padding:0 14px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.plano-card{display:flex;flex-direction:column;}
+.plano-card.destaque{border-color:var(--roxo-vivo);box-shadow:var(--sombra-roxa);transform:translateY(-6px);}
+.badge-plano{
+  position:absolute;top:12px;left:12px;padding:5px 14px;border-radius:var(--radius-pill);
+  font-size:0.68rem;font-weight:900;letter-spacing:0.06em;text-transform:uppercase;color:var(--roxo-escuro);
+  background:var(--grad-laranja);box-shadow:0 3px 10px rgba(0,0,0,0.15);
+}
+.plano-card h3{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:800;color:var(--roxo-escuro);margin:8px 0 4px;}
+.plano-preco{font-family:'Poppins',sans-serif;font-size:2rem;font-weight:900;color:var(--roxo-vivo);line-height:1;margin-top:8px;}
+.plano-preco span{font-size:0.8rem;color:var(--cinza-texto);font-weight:700;}
+.plano-limite{font-size:0.82rem;font-weight:800;color:var(--laranja-escuro);margin:6px 0 18px;}
+.plano-lista{list-style:none;flex:1;margin-bottom:18px;}
+.plano-lista li{font-size:0.84rem;color:var(--cinza-texto);font-weight:600;padding:7px 0;border-top:1px solid rgba(155,89,197,0.10);display:flex;gap:8px;align-items:flex-start;}
+.plano-lista li:first-child{border-top:none;}
+.plano-lista li i{color:var(--roxo-vivo);margin-top:3px;font-size:0.75rem;}
+.nivel-badge-vendas{
+  display:inline-flex;align-items:center;gap:7px;font-family:'Poppins',sans-serif;font-size:0.66rem;
+  font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:var(--roxo-vivo);
+  background:var(--cinza-leve);padding:4px 12px 4px 6px;border-radius:var(--radius-pill);margin-bottom:12px;
+}
+.nivel-badge-vendas .bolinha{
+  width:18px;height:18px;border-radius:50%;background:var(--grad-btn);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:900;
+}
+.trilha-crescimento{max-width:640px;margin:30px auto 0;padding:0 24px;display:flex;align-items:flex-start;justify-content:space-between;position:relative;}
+.trilha-crescimento::before{content:'';position:absolute;top:13px;left:52px;right:52px;height:2px;background:var(--roxo-lavanda);z-index:0;}
+.trilha-passo{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;}
+.trilha-passo .ponto{
+  width:26px;height:26px;border-radius:50%;background:#fff;border:2.5px solid var(--roxo-vivo);
+  display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:900;
+  font-size:0.75rem;color:var(--roxo-vivo);
+}
+.trilha-passo.destaque-nivel .ponto{background:var(--grad-btn);color:#fff;border-color:transparent;}
+.trilha-passo span.nome-nivel{font-family:'Poppins',sans-serif;font-weight:800;font-size:0.74rem;color:var(--roxo-medio);text-align:center;}
+.btn-add{
+  width:100%;padding:13px;border:none;border-radius:var(--radius-md);background:var(--grad-btn);color:#fff;
+  font-family:'Poppins',sans-serif;font-size:0.9rem;font-weight:800;letter-spacing:0.03em;cursor:pointer;
+  box-shadow:0 4px 14px rgba(91,45,142,0.35);transition:all 0.22s ease;text-align:center;display:block;
+}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(91,45,142,0.45);}
+.btn-add-ouro{background:var(--grad-laranja);color:var(--roxo-escuro);box-shadow:var(--sombra-laranja);}
+.plano-nota{display:block;text-align:center;font-size:0.72rem;color:var(--cinza-texto);font-weight:700;margin-top:9px;}
+
+/* CTA FINAL (reaproveita pagamento-wrap) */
+.cta-final-wrap{background:var(--fundo-suave);padding:50px 20px;text-align:center;border-top:1px solid rgba(155,89,197,0.06);}
+.cta-final-wrap h2{font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:900;color:var(--roxo-escuro);margin-bottom:12px;}
+.cta-final-wrap p{color:var(--cinza-texto);font-weight:600;max-width:460px;margin:0 auto 24px;}
+
+/* FOOTER */
+footer{background:var(--grad-hero);color:rgba(255,255,255,0.85);text-align:center;padding:34px 20px;font-size:0.88rem;}
+footer p{margin-bottom:6px;}
+footer a{color:var(--amarelo-ouro);text-decoration:none;font-weight:700;}
+footer a:hover{text-decoration:underline;}
+.social-icons{display:flex;justify-content:center;gap:20px;margin-top:18px;}
+.social-icons a{
+  display:flex;align-items:center;justify-content:center;width:42px;height:42px;
+  background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);border-radius:50%;
+  color:#fff;font-size:1.1rem;transition:all 0.25s;
+}
+.social-icons a:hover{background:rgba(255,208,0,0.25);border-color:var(--amarelo-ouro);color:var(--amarelo-ouro);transform:scale(1.12);}
+
+/* BOTÃO FIXO — CRIAR LOJA */
+.cta-fixo{
+  position:fixed;left:18px;bottom:18px;background:var(--grad-btn);color:#fff;padding:13px 20px;
+  border-radius:var(--radius-pill);font-family:'Poppins',sans-serif;font-weight:800;font-size:0.88rem;
+  cursor:pointer;z-index:1000;box-shadow:var(--sombra-roxa);transition:all 0.25s ease;
+  display:flex;align-items:center;gap:8px;
+}
+.cta-fixo:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 14px 36px rgba(91,45,142,0.45);}
+
+/* WHATSAPP FIXO */
+.whatsapp{
+  position:fixed;right:18px;bottom:18px;background:#25D366;color:#fff;width:52px;height:52px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;z-index:1000;
+  box-shadow:0 6px 20px rgba(37,211,102,0.4);transition:all 0.25s;
+}
+.whatsapp:hover{transform:scale(1.12);box-shadow:0 10px 30px rgba(37,211,102,0.5);}
+
+@media (max-width:860px){
+  main.grid-recursos{grid-template-columns:repeat(2,1fr);}
+  .passos-grid{grid-template-columns:1fr;gap:34px;}
+  .grid-planos{grid-template-columns:1fr;}
+  .plano-card.destaque{transform:none;}
+  .trilha-crescimento{max-width:320px;padding:0 6px;}
+  .trilha-crescimento::before{left:30px;right:30px;}
+}
+@media (max-width:340px){
+  .mock-produtos-real{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- BARRA TOPO -->
+<div class="barra-promo">🚀 Crie sua loja online agora e comece a vender hoje mesmo</div>
+
+<!-- HEADER -->
+<header>
+  <a class="logo-vp" href="#topo"><img src="logo-vitrinepro.png" alt="Vitrine Pro"></a>
+  <nav class="nav-links">
+    <a href="#recursos">Recursos</a>
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#planos">Planos</a>
+    <a href="admin.html">Entrar</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="topo">
+  <span class="olho"><span class="ponto">✦</span> Feito pra quem cria produto personalizado</span>
+  <h1>Sua loja merece uma vitrine <em>à altura</em> do que você faz</h1>
+  <p class="sub">Monte seu catálogo, personalize as cores, o banner e o rodapé, e comece a receber pedidos direto no WhatsApp — tudo num painel simples, sem precisar programar nada.</p>
+  <div class="hero-ctas">
+    <a class="btn-grande btn-primario-lg" href="admin.html?cadastro=1">Criar minha loja agora</a>
+    <a class="btn-grande btn-secundario-lg" href="#planos">Ver planos e preços</a>
+  </div>
+</section>
+
+<!-- MOCK DA LOJA — RÉPLICA DE UM CATÁLOGO REAL FEITO NA VITRINE PRO -->
+<div class="banner-wrap">
+  <p class="banner-legenda">É assim que fica a sua loja</p>
+  <div class="tel-frame">
+    <div class="tel-tela">
+      <div class="tel-notch"></div>
+
+      <div class="mock-topo-real">
+        <div class="mock-marca">Rabisco<span>&amp;</span>Arte</div>
+        <div class="mock-marca-sub">Produtos personalizados</div>
+      </div>
+
+      <div class="mock-filtros">
+        <span class="mock-filtro ativo">Todos</span>
+        <span class="mock-filtro">Canecas</span>
+        <span class="mock-filtro">Copos</span>
+        <span class="mock-filtro">Presentes</span>
+        <span class="mock-filtro">Decoração</span>
+      </div>
+
+      <div class="mock-produtos-real">
+        <div class="mock-card-real">
+          <div class="foto-real roxa">
+            <span class="selo novo">Novo</span>
+            <i class="fa-solid fa-mug-saucer"></i>
+          </div>
+          <div class="info-real">
+            <div class="nome-real">Caneca Porcelana</div>
+            <div class="preco-real">R$ 34,90</div>
+            <div class="parcela-real">ou 3x de R$ 11,63</div>
+            <div class="btn-add-real">Adicionar</div>
+          </div>
+        </div>
+        <div class="mock-card-real">
+          <div class="foto-real laranja">
+            <span class="selo promo">Promoção</span>
+            <i class="fa-solid fa-mug-hot"></i>
+          </div>
+          <div class="info-real">
+            <div class="nome-real">Caneca Alça/Interna Cor</div>
+            <div class="preco-real">R$ 44,90</div>
+            <div class="parcela-real">ou 3x de R$ 14,97</div>
+            <div class="btn-add-real">Adicionar</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-whats-real"><i class="fab fa-whatsapp"></i></div>
+    </div>
+  </div>
+</div>
+
+<!-- RECURSOS -->
+<div class="secao-titulo" id="recursos">
+  <h2>Recursos</h2>
+  <span class="linha-deco"></span>
+</div>
+<p class="secao-desc">Tudo que uma vitrine profissional precisa, num só painel — sem plugin, sem freelancer.</p>
+
+<main class="grid-recursos">
+  <div class="produto">
+    <div class="icone-recurso"><i class="fa-solid fa-shop"></i></div>
+    <h3>Catálogo que você edita sozinho</h3>
+    <p>Adicione, edite e organize produtos, preços e categorias em segundos.</p>
+  </div>
+  <div class="produto">
+    <div class="icone-recurso"><i class="fa-brands fa-whatsapp"></i></div>
+    <h3>Venda direto no WhatsApp</h3>
+    <p>Cada pedido chega pronto: produtos, valor, endereço e cliente.</p>
+  </div>
+  <div class="produto">
+    <div class="icone-recurso"><i class="fa-solid fa-palette"></i></div>
+    <h3>Com a cara da sua marca</h3>
+    <p>Logo, banner rotativo, cores e depoimentos — sua loja, seu jeito.</p>
+  </div>
+  <div class="produto">
+    <div class="icone-recurso"><i class="fa-solid fa-gauge-high"></i></div>
+    <h3>Painel simples de verdade</h3>
+    <p>Configure tudo em poucos cliques, direto do celular.</p>
+  </div>
+</main>
+
+<!-- COMO FUNCIONA -->
+<section class="como-funciona" id="como-funciona">
+  <div class="secao-titulo" style="padding-top:0;">
+    <h2>Como funciona</h2>
+    <span class="linha-deco"></span>
+  </div>
+  <p class="secao-desc">Do cadastro ao primeiro pedido, em 3 passos.</p>
+
+  <div class="passos-grid">
+    <div class="passo">
+      <div class="num">1</div>
+      <h3>Escolha seu plano</h3>
+      <p>Crie sua conta e escolha o plano de acordo com seu catálogo.</p>
+    </div>
+    <div class="passo">
+      <div class="num">2</div>
+      <h3>Monte sua vitrine</h3>
+      <p>Adicione produtos, banner, logo e depoimentos no painel.</p>
+    </div>
+    <div class="passo">
+      <div class="num">3</div>
+      <h3>Compartilhe e venda</h3>
+      <p>Envie o link da loja e receba os pedidos no seu WhatsApp.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="planos-secao" id="planos">
+  <div class="secao-titulo">
+    <h2>Planos</h2>
+    <span class="linha-deco"></span>
+  </div>
+  <p class="secao-desc">Não são só limites — são níveis de crescimento. Teste qualquer um grátis por 7 dias e suba de nível quando sua loja pedir mais.</p>
+
+  <div class="trilha-crescimento">
+    <div class="trilha-passo">
+      <div class="ponto">1</div>
+      <span class="nome-nivel">Starter</span>
+    </div>
+    <div class="trilha-passo destaque-nivel">
+      <div class="ponto">2</div>
+      <span class="nome-nivel">Growth</span>
+    </div>
+    <div class="trilha-passo">
+      <div class="ponto">3</div>
+      <span class="nome-nivel">Elite</span>
+    </div>
+  </div>
+
+  <div class="grid-planos">
+    <div class="produto plano-card">
+      <span class="nivel-badge-vendas"><span class="bolinha">1</span> Starter</span>
+      <h3>Básico</h3>
+      <div class="plano-preco">R$ 24,90<span>/mês</span></div>
+      <div class="plano-limite">até 20 produtos</div>
+      <ul class="plano-lista">
+        <li><i class="fa-solid fa-check"></i> Catálogo com até 20 produtos</li>
+        <li><i class="fa-solid fa-check"></i> Loja própria com pedidos direto no WhatsApp</li>
+        <li><i class="fa-solid fa-check"></i> 1 banner de destaque no topo</li>
+        <li><i class="fa-solid fa-circle-info"></i> Com anúncios do Google na loja</li>
+      </ul>
+      <a class="btn-add" href="admin.html?cadastro=1&plano=basico">Teste por 7 dias</a>
+      <span class="plano-nota">Depois, R$ 24,90/mês</span>
+    </div>
+
+    <div class="produto plano-card destaque" style="position:relative;">
+      <span class="badge-plano">Mais escolhido</span>
+      <span class="nivel-badge-vendas"><span class="bolinha">2</span> Growth</span>
+      <h3>Intermediário</h3>
+      <div class="plano-preco">R$ 39,90<span>/mês</span></div>
+      <div class="plano-limite">até 50 produtos</div>
+      <ul class="plano-lista">
+        <li><i class="fa-solid fa-check"></i> Tudo do nível Starter</li>
+        <li><i class="fa-solid fa-check"></i> Catálogo com até 50 produtos</li>
+        <li><i class="fa-solid fa-check"></i> Até 5 banners rotativos</li>
+        <li><i class="fa-solid fa-check"></i> Depoimentos de clientes na loja</li>
+        <li><i class="fa-solid fa-check"></i> Nota média e nº de pedidos em destaque</li>
+        <li><i class="fa-solid fa-check"></i> Sem anúncios — loja 100% limpa</li>
+      </ul>
+      <a class="btn-add btn-add-ouro" href="admin.html?cadastro=1&plano=intermediario">Teste por 7 dias</a>
+      <span class="plano-nota">Depois, R$ 39,90/mês</span>
+    </div>
+
+    <div class="produto plano-card">
+      <span class="nivel-badge-vendas"><span class="bolinha">3</span> Elite</span>
+      <h3>Completo</h3>
+      <div class="plano-preco">R$ 59,90<span>/mês</span></div>
+      <div class="plano-limite">produtos ilimitados</div>
+      <ul class="plano-lista">
+        <li><i class="fa-solid fa-check"></i> Tudo do nível Growth</li>
+        <li><i class="fa-solid fa-check"></i> Produtos ilimitados</li>
+        <li><i class="fa-solid fa-check"></i> Banners ilimitados</li>
+        <li><i class="fa-solid fa-check"></i> Depoimentos ilimitados</li>
+        <li><i class="fa-solid fa-check"></i> Prioridade no suporte</li>
+      </ul>
+      <a class="btn-add" href="admin.html?cadastro=1&plano=completo">Teste por 7 dias</a>
+      <span class="plano-nota">Depois, R$ 59,90/mês</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-final-wrap">
+  <h2>Sua vitrine no ar hoje ainda</h2>
+  <p>Sem contrato de fidelidade, sem taxa de instalação. Cadastre-se, monte seu catálogo e comece a vender.</p>
+  <a class="btn-grande btn-primario-lg" href="admin.html?cadastro=1">Criar minha loja grátis</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Vitrine Pro. Todos os direitos reservados</p>
+  <p>Desenvolvido por <a href="https://www.instagram.com/rabisco.earte" target="_blank">Rabisco Designer</a></p>
+  <div class="social-icons">
+    <a href="https://www.instagram.com/rabisco.earte" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+  </div>
+</footer>
+
+<!-- BOTÃO FIXO CRIAR LOJA -->
+<a class="cta-fixo" href="admin.html?cadastro=1">✨ Criar minha loja</a>
+
+<!-- WHATSAPP FIXO -->
+<a class="whatsapp" href="https://wa.me/5585994083703" target="_blank" aria-label="WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+</body>
+</html>
