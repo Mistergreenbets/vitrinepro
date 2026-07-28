@@ -2,6 +2,10 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
+<!-- Verificação de propriedade do site no Google AdSense — fixa no HTML,
+     não depende do JS/Firestore carregar, então o rastreador do Google
+     sempre consegue encontrar (mesmo em lojas sem anúncio ativo agora). -->
+<meta name="google-adsense-account" content="ca-pub-6997058042069390">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title id="tituloLoja">Rabisco & Arte - Produtos Personalizados</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -256,6 +260,7 @@ header.scrolled img {
 ============================================= */
 .anuncio-slot {
   display: none;
+  max-width: 320px;
   margin: 12px auto;
   padding: 0 14px;
   text-align: center;
@@ -294,7 +299,6 @@ header.scrolled img {
   justify-content: center;
   gap: 4px;
   padding: 10px;
-  min-height: 100%;
 }
 
 .anuncio-produto .anuncio-rotulo {
@@ -308,8 +312,6 @@ header.scrolled img {
 
 .anuncio-produto .adsbygoogle {
   width: 100%;
-  max-width: 100%;
-}
 }
 
 /* =============================================
@@ -1203,9 +1205,6 @@ footer a:hover { text-decoration: underline; }
 </head>
 <body>
 
-   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6997058042069390"
-     crossorigin="anonymous"></script>
-<meta name="google-adsense-account" content="ca-pub-6997058042069390">
 <!-- BARRA TOPO -->
 <div class="barra-promo" id="barraPromo">
   💝 Não dê apenas um presente… crie uma memória — Personalização exclusiva com qualidade premium
@@ -1300,7 +1299,9 @@ footer a:hover { text-decoration: underline; }
 <div class="anuncio-slot" id="anuncioRodape">
   <span class="anuncio-rotulo">Publicidade</span>
   <ins class="adsbygoogle"
-       style="display:inline-block;width:300px;height:100px"
+       style="display:block"
+       data-ad-format="auto"
+       data-full-width-responsive="true"
        data-ad-slot="8510010989"></ins>
 </div>
 
@@ -1467,15 +1468,19 @@ function ativarAnunciosPendentes(){
   });
 }
 
-/* Cria o card de anúncio que entra "no lugar de um produto" dentro do grid. */
+/* Cria o card de anúncio que entra "no lugar de um produto" dentro do grid.
+   Usa o formato In-feed (fluid) do AdSense — pensado pra aparecer dentro
+   de listas/grids de forma nativa, sem largura/altura fixa. */
 function criarCardAnuncioGrid(){
   const div = document.createElement("div");
   div.className = "anuncio-produto";
   div.innerHTML = `
     <span class="anuncio-rotulo">Publicidade</span>
     <ins class="adsbygoogle"
-         style="display:inline-block;width:100%;max-width:260px;height:100px"
-         data-ad-slot="4769388165"></ins>
+         style="display:block"
+         data-ad-format="fluid"
+         data-ad-layout-key="-6t+ed+2i-1n-4w"
+         data-ad-slot="1131194358"></ins>
   `;
   return div;
 }
